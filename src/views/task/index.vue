@@ -170,196 +170,196 @@
   </div>
 </template>
 <script>
-import Vue from "vue";
+import Vue from 'vue'
 
 import {
   fetchTaskList,
   fetchTaskDetail,
   saveEditTask,
   handelAddTask
-} from "@/api/task";
-var moment = require("moment");
-import { quillEditor } from "vue-quill-editor";
-import "quill/dist/quill.core.css";
-import "quill/dist/quill.snow.css";
-import "quill/dist/quill.bubble.css";
+} from '@/api/task'
+var moment = require('moment')
+import { quillEditor } from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 export default {
   data() {
     return {
-      emptytext: "暂无数据",
+      emptytext: '暂无数据',
       taskData: [],
-      postfile: "",
+      postfile: '',
       listLoading: true,
       editTask: {
-        id: "",
-        title: "",
-        describe: "",
-        endTime: "",
-        expenses: "",
-        isEnable: "",
-        image: ""
+        id: '',
+        title: '',
+        describe: '',
+        endTime: '',
+        expenses: '',
+        isEnable: '',
+        image: ''
       },
       editorOption: {},
-      formLabelWidth: "80px",
+      formLabelWidth: '80px',
       taskVisible: false,
       curPage: 1,
       totalCount: 0,
       pageSize: 20,
-      multipleSelection: [], //存放目前选中的所有项。
+      multipleSelection: [], // 存放目前选中的所有项。
       taskForm: {
-        id: "",
-        title: "",
-        isEnable: "",
-        dateTime: ""
+        id: '',
+        title: '',
+        isEnable: '',
+        dateTime: ''
       },
       statelist: [
         {
-          value: "已审",
+          value: '已审',
           id: true
         },
         {
-          value: "未审",
+          value: '未审',
           id: false
         }
       ],
       isEnableList: [
         {
-          name: "已审",
+          name: '已审',
           value: true
         },
         {
-          name: "未审",
+          name: '未审',
           value: false
         }
       ],
       pickerOptions: {
         shortcuts: [
           {
-            text: "最近一个月",
+            text: '最近一个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
             }
           },
           {
-            text: "最近二个月",
+            text: '最近二个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 60);
-              picker.$emit("pick", [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 60)
+              picker.$emit('pick', [start, end])
             }
           },
           {
-            text: "最近三个月",
+            text: '最近三个月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
             }
           }
         ]
       },
       addTaskForm: {
-        title: "",
-        describe: "",
-        endTime: "",
-        expenses: "",
-        image: "",
-        isEnable: ""
+        title: '',
+        describe: '',
+        endTime: '',
+        expenses: '',
+        image: '',
+        isEnable: ''
       },
       addTaskRules: {},
       fileList: [],
       addOption: {},
       addVisible: false,
-      imageUrl: ""
-    };
+      imageUrl: ''
+    }
   },
   components: {
     quillEditor
   },
   created() {
-    this.fetchData();
-    //初始化起始时间和当前时间
-    const now = new Date();
+    this.fetchData()
+    // 初始化起始时间和当前时间
+    const now = new Date()
     const start = moment(now.getTime() - 3600 * 1000 * 24 * 1).format(
-      "YYYY-MM-DD HH:mm:ss"
-    );
-    const end = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
-    this.taskForm.dateTime = [start, end];
+      'YYYY-MM-DD HH:mm:ss'
+    )
+    const end = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+    this.taskForm.dateTime = [start, end]
     this.editTask.endTime = moment(this.editTask.endTime).format(
-      "YYYY-MM-DD HH:mm:ss"
-    );
+      'YYYY-MM-DD HH:mm:ss'
+    )
   },
   methods: {
-    //获取活动列表页
+    // 获取活动列表页
     fetchData() {
-      this.listLoading = true;
+      this.listLoading = true
       fetchTaskList({ page: this.curPage, limit: this.pageSize }).then(
         response => {
           if (response.data.code == 0) {
             if (response.data.total > 0) {
-              this.taskData = response.data.items;
-              this.totalCount = response.data.total;
-              this.listLoading = false;
+              this.taskData = response.data.items
+              this.totalCount = response.data.total
+              this.listLoading = false
             } else {
-              this.taskData = [];
-              this.totalCount = 0;
-              this.listLoading = false;
-              this.emptytext = "暂无数据";
+              this.taskData = []
+              this.totalCount = 0
+              this.listLoading = false
+              this.emptytext = '暂无数据'
             }
           }
         }
-      );
+      )
     },
 
-    //搜索活动列表
+    // 搜索活动列表
     onSearch() {
-      this.listLoading = true;
+      this.listLoading = true
       var data = {
         id: this.taskForm.id,
         title: this.taskForm.title,
         begintime: moment(this.taskForm.dateTime[0]).format(
-          "YYYY-MM-DD HH:mm:ss"
+          'YYYY-MM-DD HH:mm:ss'
         ),
         endtime: moment(this.taskForm.dateTime[1]).format(
-          "YYYY-MM-DD HH:mm:ss"
+          'YYYY-MM-DD HH:mm:ss'
         ),
         isEnable: this.taskForm.isEnable,
         Page: this.curPage,
         PageSize: this.pageSize
-      };
+      }
       fetchTaskList(data).then(res => {
         if (res.data.code == 0) {
           if (res.data.total > 0) {
-            this.taskData = res.data.items;
-            this.totalCount = res.data.total;
-            this.listLoading = false;
+            this.taskData = res.data.items
+            this.totalCount = res.data.total
+            this.listLoading = false
           } else {
-            this.taskData = [];
-            this.totalCount = 0;
-            this.emptytext = res.data.message;
-            this.listLoading = false;
-            this.emptytext = "没有符合条件的数据";
+            this.taskData = []
+            this.totalCount = 0
+            this.emptytext = res.data.message
+            this.listLoading = false
+            this.emptytext = '没有符合条件的数据'
           }
         }
-      });
+      })
     },
 
-    //编辑任务,获取任务详细
+    // 编辑任务,获取任务详细
     handleTask(index, row) {
-      this.taskVisible = true;
+      this.taskVisible = true
       fetchTaskDetail(row.id).then(response => {
         if (response.data.code == 0) {
-          this.editTask = row;
-          this.imageUrl = this.editTask.image;
+          this.editTask = row
+          this.imageUrl = this.editTask.image
         } else {
-          this.$message.error(response.data.msg);
+          this.$message.error(response.data.msg)
         }
-      });
+      })
     },
 
     saveTask() {
@@ -369,59 +369,59 @@ export default {
         expenses: this.editTask.expenses,
         isEnable: this.editTask.isEnable,
         // image: editTask.image,
-        endTime: moment(this.editTask.endTime).format("YYYY-MM-DD HH:mm:ss")
-      };
-      if (this.editTask.expenses != "") {
+        endTime: moment(this.editTask.endTime).format('YYYY-MM-DD HH:mm:ss')
+      }
+      if (this.editTask.expenses != '') {
         saveEditTask(data).then(res => {
           if (res.data.code == 0) {
-            this.taskVisible = false;
-            this.$message.success(res.data.msg);
+            this.taskVisible = false
+            this.$message.success(res.data.msg)
           } else {
-            this.$message.error(res.data.msg);
+            this.$message.error(res.data.msg)
           }
-        });
+        })
       } else {
-        this.$message.error("费用不能为空");
+        this.$message.error('费用不能为空')
       }
     },
 
-    //编辑活动状态转换
+    // 编辑活动状态转换
     convert(isEnable) {
       if (isEnable == true) {
-        return "已审";
+        return '已审'
       } else if (isEnable == false) {
-        return "未审";
+        return '未审'
       }
     },
 
-    //每页显示数据量变更
+    // 每页显示数据量变更
     handleSizeChange(val) {
-      this.pageSize = val;
-      console.log(val);
-      this.fetchData();
+      this.pageSize = val
+      console.log(val)
+      this.fetchData()
     },
     handleCurrentChange(val) {
-      this.curPage = val;
-      this.fetchData();
+      this.curPage = val
+      this.fetchData()
     },
 
-    //新增活动、
+    // 新增活动、
     addTask() {
-      this.addVisible = true;
-      this.imageUrl = "";
-      this.addTaskForm = {};
+      this.addVisible = true
+      this.imageUrl = ''
+      this.addTaskForm = {}
     },
 
-    //保存新增活动数据
+    // 保存新增活动数据
     saveaddTaskForm(addTaskForm) {
       var addData = {
         title: addTaskForm.title,
         describe: addTaskForm.describe,
-        endTime: moment(addTaskForm.endTime).format("YYYY-MM-DD HH:mm:ss"),
+        endTime: moment(addTaskForm.endTime).format('YYYY-MM-DD HH:mm:ss'),
         expenses: addTaskForm.expenses,
         isEnable: addTaskForm.isEnable
         // image: this.imageUrl
-      };
+      }
       if (
         this.addTaskForm.title != undefined &&
         this.addTaskForm.describe != undefined &&
@@ -431,40 +431,40 @@ export default {
       ) {
         handelAddTask(addData).then(res => {
           if (res.data.code == 0) {
-            this.fetchData();
-            this.$message.success(res.data.msg);
-            this.addVisible = false;
+            this.fetchData()
+            this.$message.success(res.data.msg)
+            this.addVisible = false
           } else {
-            this.$message.error(res.data.msg);
+            this.$message.error(res.data.msg)
           }
-        });
+        })
       } else {
-        this.$message.error("提示：标题、描述、费用、状态、结束时间不能为空");
+        this.$message.error('提示：标题、描述、费用、状态、结束时间不能为空')
       }
     },
     handleAvatarSuccess(res, file) {
-      this.imageUrl = res.data;
-      console.log(this.imageUrl);
+      this.imageUrl = res.data
+      console.log(this.imageUrl)
     },
     beforeAvatarUpload(file) {
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 2
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+        this.$message.error('提示：上传头像图片大小不能超过 2MB!')
       }
-      return isLt2M;
+      return isLt2M
     },
 
-    //点击标题跳转到对应的需求页面
+    // 点击标题跳转到对应的需求页面
     goDemand(index, row) {
       this.$router.push({
-        path: "/demand/demand",
+        path: '/demand/demand',
         query: {
           id: row.id
         }
-      });
+      })
     }
   }
-};
+}
 </script>
 
 <style>
