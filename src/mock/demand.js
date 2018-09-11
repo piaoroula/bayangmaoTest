@@ -1,5 +1,6 @@
 import Mock from 'mockjs'
 import { param2Obj } from '@/utils'
+var moment = require("moment");
 const demandData = []
 const count = 100
 var data
@@ -16,7 +17,9 @@ for (let i = 0; i < count; i++) {
     importance: '@integer(1, 3)',
     'type|1': ['CN', 'US', 'JP', 'EU'],
     'status|1': ['published', 'draft', 'deleted'],
-    creationTime: '@datetime',
+    creationTime: moment(new Date(new Date().getTime() - 1 * 5 * 60 * 1000)).format(
+      "YYYY-MM-DD HH:mm:ss"
+    ), //5分钟前
     comment_disabled: true,
     pageviews: '@integer(300, 5000)',
     platforms: ['a-platform'],
@@ -32,14 +35,14 @@ for (let i = 0; i < count; i++) {
 export default {
   //需求列表
   GetdemandList: config => {
-    const { id, activityId, userId, begintime, endtime, state, page = 1, limit = 20 } = param2Obj(config.url)
+    const { id, activityId, userId, begintime, endtime, state, page = 1, limit = 20 } = JSON.parse(config.body)
     let mockList = demandData.filter(item => {
-      if (id && (item.id).toString() != id) return false
-      if (activityId && (item.activityId).toString() != activityId) return false
-      if (userId && (item.userId).toString() != userId) return false
-      if (state && (item.state).toString() !== state) return false
-      if (begintime && (item.creationTime).replace(/\s/g, "+") < begintime) return false
-      if (endtime && (item.creationTime).replace(/\s/g, "+") > endtime) return false
+      if (id && item.id != id) return false
+      if (activityId && item.activityId != activityId) return false
+      if (userId && item.userId != userId) return false
+      if (state && item.state != state) return false
+      if (begintime && item.creationTime < begintime) return false
+      if (endtime && item.creationTime > endtime) return false
       return true
     })
     const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))

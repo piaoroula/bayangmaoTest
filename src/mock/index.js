@@ -18,7 +18,7 @@ Mock.mock(/\/user\/info\.*/, 'get', loginAPI.getUserInfo)
 
 
 //线报相关
-Mock.mock(/\/api\/manager\/report\/GetList/, 'get', reportAPI.GetList)
+Mock.mock(/\/api\/manager\/report\/GetList/, 'post', reportAPI.GetList)
 Mock.mock(/\/api\/manager\/report\/GetDetail/, 'get', reportAPI.getReport)
 Mock.mock(/\/api\/manager\/report\/Edit/, 'post', reportAPI.updateReport)
 Mock.mock(/\/api\/manager\/report\/Delete/, 'post', reportAPI.deleteReport)
@@ -26,12 +26,12 @@ Mock.mock(/\/api\/manager\/report\/batchDelete/, 'post', reportAPI.batchremove)
 Mock.mock(/\/api\/manager\/report\/addReport/, 'post', reportAPI.addReport)
 
 //需求相关
-Mock.mock(/\/api\/manager\/task\/GetDemandList/, 'get', demandAPI.GetdemandList)
+Mock.mock(/\/api\/manager\/task\/GetDemandList/, 'post', demandAPI.GetdemandList)
 Mock.mock(/\/api\/manager\/task\/GetDemandDetail/, 'get', demandAPI.GetdemandDetail)
 Mock.mock(/\/api\/manager\/task\/EditDemandState/, 'post', demandAPI.editDemandState)
 
 //任务相关
-Mock.mock(/\/api\/manager\/task\/GetTaskList/, 'get', taskAPI.GettaskList)
+Mock.mock(/\/api\/manager\/task\/GetTaskList/, 'post', taskAPI.GettaskList)
 Mock.mock(/\/api\/manager\/task\/getTaskDetail/, 'get', taskAPI.getTaskDetail)
 Mock.mock(/\/api\/manager\/task\/editTaskDetail/, 'post', taskAPI.editTaskDetail)
 Mock.mock(/\/api\/manager\/task\/addTask/, 'post', taskAPI.addTask)

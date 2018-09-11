@@ -13,26 +13,24 @@ for (let i = 0; i < count; i++) {
     reviewer: '@first',
     title: '@title(5, 10)',
     content: '我是测试数据',
-    creationTime: '@datetime',
+    creationTime: moment(new Date(new Date().getTime() - 1 * 5 * 60 * 1000)).format(
+      "YYYY-MM-DD HH:mm:ss"
+    ), //5分钟前
     state: "@boolean",
   }))
 }
 export default {
   //线报数据列表  
   GetList: config => {
-    const { id, begintime, endtime, creationTime, title, state, page = 1, limit = 20, sort } = param2Obj(config.url)
+    const { id, begintime, endtime, creationTime, title, state, page = 1, limit = 20, sort } = JSON.parse(config.body)
     let mockList = reportData.filter(item => {
       if (id && (item.id).toString() != id) return false
-      if (begintime && (item.creationTime).replace(/\s/g, "+") < begintime) return false
-      if (endtime && (item.creationTime).replace(/\s/g, "+") > endtime) return false
-      if (title && (item.title).replace(/\s/g, "+") != title) return false   //title传过来的时候空格被序列化了，所以replace(/\s/g, "+")是将空格转化成+了
-      if (state && (item.state).toString() != state) return false
+      if (begintime && item.creationTime < begintime) return false
+      if (endtime && item.creationTime > endtime) return false
+      if (state && item.state != state) return false
+      if (title && (item.title).indexOf(title) < 0) return false   //title传过来的时候空格被序列化了，所以replace(/\s/g, "+")是将空格转化成+了
       return true
     })
-
-    if (sort === "-id") {
-      mockList = mockList.reverse()
-    }
     const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
     return {
       code: 0,
@@ -67,8 +65,8 @@ export default {
     const { id, title, content } = JSON.parse(config.body)
     reportData.some(u => {
       if (u.id == id) {
-        u.title == title
-        u.content == content
+        u.title = title
+        u.content = content
         data = {
           code: 0,
           msg: '编辑成功'
@@ -145,13 +143,6 @@ export default {
         state: true,
         creationTime: time
       }
-      // reportData.push({
-      //   id: newId,
-      //   title: title,
-      //   content: content,
-      //   state: true,
-      //   creationTime: time
-      // })
       reportData.splice(0, 0, addData)   //(0, 0, addData)，0为索引值，第二个0为添加1条数据，设置在表格的第一行添加数据
       data = {
         code: 0,

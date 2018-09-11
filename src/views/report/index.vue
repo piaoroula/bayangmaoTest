@@ -168,7 +168,7 @@ export default {
         id: "",
         title: "",
         state: "",
-        dateTime: ""
+        dateTime: [new Date().setDate(new Date().getDate() - 3), new Date()]
       },
       statelist: [
         {
@@ -224,38 +224,11 @@ export default {
   },
   created() {
     this.getList();
-    //格式化、初始化时间
-    const now = new Date();
-    const start = moment(now.getTime() - 3600 * 1000 * 24 * 1).format(
-      "YYYY-MM-DD HH:mm:ss"
-    );
-    const end = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
-    this.reportForm.dateTime = [start, end];
   },
   methods: {
     //线报列表
     getList() {
       this.listLoading = true;
-      getReportList({ page: this.curPage, limit: this.pageSize }).then(res => {
-        if (res.data.code == 0) {
-          if (res.data.total > 0) {
-            this.report = res.data.items;
-            this.totalCount = res.data.total;
-            this.listLoading = false;
-          } else if (res.data.total == 0) {
-            this.report = {};
-            this.totalCount = 0;
-            this.listLoading = false;
-            this.emptytext = "暂时没有数据";
-          }
-        }
-      });
-    },
-    //搜索线报
-    onSearch() {
-      this.listLoading = true;
-      console.log(this.reportForm.dateTime);
-
       var data = {
         id: this.reportForm.id,
         begintime: moment(this.reportForm.dateTime[0]).format(
@@ -270,26 +243,28 @@ export default {
         limit: this.pageSize
       };
       getReportList(data).then(res => {
-        console.log(res.data.total);
-        console.log(res.data.total > 0);
+        console.log(res.data);
         if (res.data.code == 0) {
           if (res.data.total > 0) {
             this.report = res.data.items;
             this.totalCount = res.data.total;
             this.listLoading = false;
-          } else if (res.data.total == 0) {
+          } else {
             this.report = {};
             this.totalCount = 0;
             this.listLoading = false;
-            this.emptytext = "暂时没有符合条件的数据";
+            this.emptytext = "暂时没有数据";
           }
         }
       });
     },
+    //搜索线报
+    onSearch() {
+      this.getList();
+    },
     // 编辑线报数据
     handleReport(index, row) {
       this.reportVisible = true;
-      console.log(row.id);
       getReportDetail(row.id).then(res => {
         if (res.data.code == 0) {
           this.editReport = row;

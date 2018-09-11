@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function fetchDemandList(query) {
+export function fetchDemandList(data) {
   return request({
     url: '/api/manager/task/GetDemandList/',
-    method: 'get',
-    params: query
+    method: 'post',
+    data
   })
 }
 export function fetchDemandDetail(id) {

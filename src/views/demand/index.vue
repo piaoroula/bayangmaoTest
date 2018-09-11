@@ -169,7 +169,7 @@ export default {
         activityId: "",
         userId: "",
         state: "",
-        dateTime: ""
+        dateTime: [new Date().setDate(new Date().getDate() - 3), new Date()]
       },
       statelist: [
         {
@@ -218,13 +218,6 @@ export default {
   },
   created() {
     this.fetchData();
-    //初始化起始时间和当前时间
-    const now = new Date();
-    const start = moment(now.getTime() - 3600 * 1000 * 24 * 1).format(
-      "YYYY-MM-DD HH:mm:ss"
-    );
-    const end = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
-    this.demandForm.dateTime = [start, end];
     //接收活动页面传过来的参数
     let id = this.$route.query.id;
     this.demandForm.activityId = id;
@@ -232,26 +225,6 @@ export default {
   methods: {
     //获取数据
     fetchData() {
-      this.listLoading = true;
-      fetchDemandList({ page: this.curPage, limit: this.pageSize }).then(
-        response => {
-          if (response.data.code == 0) {
-            if (response.data.total > 0) {
-              this.demandData = response.data.items;
-              this.totalCount = response.data.total;
-              this.listLoading = false;
-            } else if (response.data.total == 0) {
-              this.demandData = [];
-              this.totalCount = 0;
-              this.listLoading = false;
-            }
-          }
-        }
-      );
-    },
-
-    //搜索
-    onSearch() {
       this.listLoading = true;
       var data = {
         id: this.demandForm.id,
@@ -267,20 +240,24 @@ export default {
         page: this.curPage,
         limit: this.pageSize
       };
-      fetchDemandList(data).then(res => {
-        if (res.data.code == 0) {
-          if (res.data.total > 0) {
-            this.demandData = res.data.items;
-            this.totalCount = res.data.total;
+      fetchDemandList(data).then(response => {
+        if (response.data.code == 0) {
+          if (response.data.total > 0) {
+            this.demandData = response.data.items;
+            this.totalCount = response.data.total;
             this.listLoading = false;
-          } else if (res.data.total == 0) {
+          } else if (response.data.total == 0) {
             this.demandData = [];
             this.totalCount = 0;
-            this.emptytext = "没有符合条件的数据";
             this.listLoading = false;
           }
         }
       });
+    },
+
+    //搜索
+    onSearch() {
+      this.fetchData();
     },
 
     //编辑需求列表的状态

@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function getReportList(query) {
+export function getReportList(data) {
   return request({
     url: '/api/manager/report/GetList',
-    method: 'get',
-    params: query
+    method: 'post',
+    data
   })
 }
 

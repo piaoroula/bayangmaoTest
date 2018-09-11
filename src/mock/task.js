@@ -17,8 +17,12 @@ for (let i = 0; i < count; i++) {
     importance: '@integer(1, 3)',
     'type|1': ['CN', 'US', 'JP', 'EU'],
     'status|1': ['published', 'draft', 'deleted'],
-    creationTime: '@datetime',
-    endTime: '@datetime',
+    creationTime: moment(new Date(new Date().getTime() - 1 * 5 * 60 * 1000)).format(
+      "YYYY-MM-DD HH:mm:ss"
+    ), //5分钟前
+    endTime: moment(new Date(new Date().getTime() - 1 * 4 * 60 * 1000)).format(
+      "YYYY-MM-DD HH:mm:ss"
+    ), //1分钟前
     comment_disabled: true,
     pageviews: '@integer(300, 5000)',
     platforms: ['a-platform'],
@@ -27,7 +31,9 @@ for (let i = 0; i < count; i++) {
     'fileList|1-10': [{
       id: '@increment',
       demandId: '@increment',
-      creationTime: '@datetime',
+      creationTime: moment(new Date(new Date().getTime() - 1 * 5 * 60 * 1000)).format(
+        "YYYY-MM-DD HH:mm:ss"
+      ), //5分钟前
       path: '@IMG(200x100,#FFF, Hello Mock.js!)'
     }]
   }))
@@ -35,13 +41,15 @@ for (let i = 0; i < count; i++) {
 export default {
   //任务列表
   GettaskList: config => {
-    const { id, title, begintime, endtime, isEnable, page = 1, limit = 20 } = param2Obj(config.url)
+    const { id, title, begintime, endtime, isEnable, page = 1, limit = 20 } = JSON.parse(config.body)
     let mockList = taskData.filter(item => {
-      if (id && (item.id).toString() != id) return false
-      if (title && (item.title).replace(/\s/g, "+") != title) return false
-      if (isEnable && (item.isEnable).toString() !== state) return false
-      if (begintime && (item.creationTime).replace(/\s/g, "+") < begintime) return false
-      if (endtime && (item.creationTime).replace(/\s/g, "+") > endtime) return false
+      if (id && item.id != id) return false
+      if (title && (item.title).indexOf(title) < 0) return false
+      if (item.isEnable !== JSON.parse(config.body).isEnable) {
+        return false
+      }
+      if (begintime && item.creationTime < begintime) return false
+      if (endtime && item.creationTime > endtime) return false
       return true
     })
     const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
