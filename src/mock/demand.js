@@ -40,7 +40,11 @@ export default {
       if (id && item.id != id) return false
       if (activityId && item.activityId != activityId) return false
       if (userId && item.userId != userId) return false
-      if (state && item.state != state) return false
+      if (state != null) {
+        if (item.state !== JSON.parse(config.body).state) {
+          return false
+        }
+      }
       if (begintime && item.creationTime < begintime) return false
       if (endtime && item.creationTime > endtime) return false
       return true

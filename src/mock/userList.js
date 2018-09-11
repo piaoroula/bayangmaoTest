@@ -16,13 +16,15 @@ for (let i = 0; i < count; i++) {
 }
 export default {
   GetUserList: config => {
-    const { id, title, begintime, endtime, isEnable, page = 1, limit = 20 } = param2Obj(config.url)
+    const { id, title, isEnable, page = 1, limit = 20 } = param2Obj(config.url)
     let mockList = userData.filter(item => {
-      if (id && (item.id).toString() != id) return false
-      if (title && (item.title).replace(/\s/g, "+") != title) return false
-      if (isEnable && (item.isEnable).toString() !== state) return false
-      if (begintime && (item.creationTime).replace(/\s/g, "+") < begintime) return false
-      if (endtime && (item.creationTime).replace(/\s/g, "+") > endtime) return false
+      if (id && item.id != id) return false
+      if (title && (item.title).indexOf(title) < 0) return false
+      if (isEnable != null) {
+        if (item.isEnable !== JSON.parse(config.body).isEnable) {
+          return false
+        }
+      }
       return true
     })
     const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))

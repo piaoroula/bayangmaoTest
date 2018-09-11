@@ -45,9 +45,12 @@ export default {
     let mockList = taskData.filter(item => {
       if (id && item.id != id) return false
       if (title && (item.title).indexOf(title) < 0) return false
-      if (item.isEnable !== JSON.parse(config.body).isEnable) {
-        return false
+      if (isEnable != null) {
+        if (item.isEnable !== JSON.parse(config.body).isEnable) {
+          return false
+        }
       }
+
       if (begintime && item.creationTime < begintime) return false
       if (endtime && item.creationTime > endtime) return false
       return true

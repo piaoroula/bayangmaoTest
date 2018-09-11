@@ -207,9 +207,9 @@ export default {
       pageSize: 20,
       multipleSelection: [], // 存放目前选中的所有项。
       taskForm: {
-        id: "",
-        title: "",
-        isEnable: "",
+        id: null,
+        title: null,
+        isEnable: null,
         dateTime: [new Date().setDate(new Date().getDate() - 3), new Date()]
       },
       statelist: [

@@ -27,7 +27,11 @@ export default {
       if (id && (item.id).toString() != id) return false
       if (begintime && item.creationTime < begintime) return false
       if (endtime && item.creationTime > endtime) return false
-      if (state && item.state != state) return false
+      if (state != null) {
+        if (item.state !== JSON.parse(config.body).state) {
+          return false
+        }
+      }
       if (title && (item.title).indexOf(title) < 0) return false   //title传过来的时候空格被序列化了，所以replace(/\s/g, "+")是将空格转化成+了
       return true
     })
