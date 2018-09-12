@@ -210,7 +210,10 @@ export default {
         id: null,
         title: null,
         isEnable: null,
-        dateTime: [new Date().setDate(new Date().getDate() - 3), new Date()]
+        dateTime: [
+          new Date().setDate(new Date().getDate() - 3),
+          new Date().setDate(new Date().getDate() + 1)
+        ]
       },
       statelist: [
         {
@@ -264,12 +267,12 @@ export default {
         ]
       },
       addTaskForm: {
-        title: "",
-        describe: "",
-        endTime: "",
-        expenses: "",
-        image: "",
-        isEnable: ""
+        title: null,
+        describe: null,
+        endTime: null,
+        expenses: null,
+        image: null,
+        isEnable: null
       },
       addTaskRules: {},
       fileList: [],
@@ -396,23 +399,29 @@ export default {
         // image: this.imageUrl
       };
       if (
-        this.addTaskForm.title != undefined &&
-        this.addTaskForm.describe != undefined &&
-        this.addTaskForm.expenses != undefined &&
-        this.addTaskForm.isEnable != undefined &&
-        this.addTaskForm.endTime != undefined
+        this.addTaskForm.title == null ||
+        this.addTaskForm.describe == null ||
+        this.addTaskForm.expenses == null ||
+        this.addTaskForm.isEnable == null ||
+        this.addTaskForm.endTime == null
       ) {
+        this.$message.error("提示：标题、描述、费用、状态、结束时间不能为空");
+      } else if (this.addTaskForm.endTime < new Date()) {
+        this.$message.error(
+          "当前结束时间不能小于任务创建时间，创建时间默认为当前时间"
+        );
+      } else if (this.addTaskForm.expenses <= 0) {
+        this.$message.error("费用必须大于0");
+      } else {
         handelAddTask(addData).then(res => {
           if (res.data.code == 0) {
             this.fetchData();
-            this.$message.success(res.data.msg);
             this.addVisible = false;
+            this.$message.success(res.data.msg);
           } else {
             this.$message.error(res.data.msg);
           }
         });
-      } else {
-        this.$message.error("提示：标题、描述、费用、状态、结束时间不能为空");
       }
     },
     handleAvatarSuccess(res, file) {

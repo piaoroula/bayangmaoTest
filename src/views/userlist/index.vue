@@ -42,7 +42,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="CurrentPage" :page-sizes="[20,50, 150, 200, 250]" :page-size="PageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="CurrentPage" :page-sizes="[10,20,50, 150, 200, 250]" :page-size="PageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
     </el-pagination>
 
     <!--编辑页面-->
@@ -69,9 +69,6 @@
 
     <el-dialog title="修改用户密码" :visible.sync="updatePassVisible">
       <el-form :model="updatePass" status-icon :rules="rules2" ref="updatePassRuleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="旧密码" :label-width="formLabelWidth" prop='oldPass'>
-          <el-input type="password" v-model="updatePass.oldPass" auto-complete="off"></el-input>
-        </el-form-item>
         <el-form-item label="新密码" :label-width="formLabelWidth" prop="newPass">
           <el-input type="password" v-model="updatePass.newPass" auto-complete="off"></el-input>
         </el-form-item>
@@ -100,20 +97,25 @@ import {
 import { isvalidateEmail, validatePhoneNumber } from "@/utils/validate";
 export default {
   data() {
-    var validateOldDPass = (rule, value, callback) => {
-      if (!value) {
-        callback(new Error("请输入密码"));
-      } else {
-        return callback(); // 还有这里，确保每个验证函数都要有
-      }
-    };
     var validatePass = (rule, value, callback) => {
+      // if (!value) {
+      //   callback(new Error("请输入密码"));
+      // } else if (value.length < 6) {
+      //   callback(new Error("密码不得小于6位"));
+      // } else {
+      //   if (this.updatePass.sureNewPass !== "") {
+      //     this.$refs.updatePassRuleForm.validateField("sureNewPass");
+      //   }
+      //   callback();
+      // }
       if (!value) {
         callback(new Error("请输入密码"));
+      } else if (value.length < 6) {
+        callback(new Error("密码不得小于6位"));
+      } else if (this.updatePass.sureNewPass !== "") {
+        this.$refs.updatePassRuleForm.validateField("sureNewPass");
+        callback();
       } else {
-        if (this.updatePass.sureNewPass !== "") {
-          this.$refs.updatePassRuleForm.validateField("sureNewPass");
-        }
         callback();
       }
     };
@@ -149,7 +151,7 @@ export default {
         phoneNumber: "",
         email: "",
         index: "",
-        RoleNames: []
+        RoleNames: ["admin"]
       },
       editUserRules: {
         phoneNumber: [{ validator: validatephoneNumber, trigger: "blur" }],
@@ -179,12 +181,10 @@ export default {
       updatePass: {
         id: "",
         userName: "",
-        oldPass: "",
         newPass: "",
         sureNewPass: ""
       },
       rules2: {
-        oldPass: [{ validator: validateOldDPass, trigger: "blur" }],
         newPass: [{ validator: validatePass, trigger: "blur" }],
         sureNewPass: [{ validator: validatePass2, trigger: "blur" }]
       },
@@ -228,9 +228,9 @@ export default {
       console.log(row);
       //获取用户详细信息
       fetchUserDetail(row.id).then(res => {
-        console.log(res);
         if (res.data.code == 0) {
           this.editUser = row;
+          console.log(row);
           this.editUser.roleNames = row.setRoles.split(",");
         }
       });
@@ -247,8 +247,8 @@ export default {
       this.$refs.editUserRuleForm.validate(valid => {
         if (valid) {
           handelEditUser(data).then(res => {
-            console.log(res);
             if (res.data.code == 0) {
+              this.fetchData();
               this.userVisible = false;
               this.$message.success(res.data.msg);
             } else {
@@ -299,25 +299,23 @@ export default {
 
     //保存修改修改密码
     savePass(updatePass) {
-      this.$confirm(
-        "确定要修改用户：" + updatePass.userName + "的密码?",
-        "密码修改确认",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消"
-        }
-      )
-        .then(() => {
-          var passData = {
-            id: updatePass.id,
-            oldPass: updatePass.oldPass,
-            newPass: updatePass.newPass,
-            sureNewPass: updatePass.sureNewPass
-          };
-          this.$refs.updatePassRuleForm.validate(valid => {
-            if (valid) {
+      this.$refs.updatePassRuleForm.validate(valid => {
+        if (valid) {
+          this.$confirm(
+            "确定要修改用户：" + updatePass.userName + "的密码?",
+            "密码修改确认",
+            {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消"
+            }
+          )
+            .then(() => {
+              var passData = {
+                id: updatePass.id,
+                newPass: updatePass.newPass,
+                sureNewPass: updatePass.sureNewPass
+              };
               changeUserPass(passData).then(res => {
-                console.log(res);
                 if (res.data.code == 0) {
                   this.updatePassVisible = false;
                   this.$message.success(
@@ -329,15 +327,15 @@ export default {
                   );
                 }
               });
-            }
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消重置密码"
-          });
-        });
+            })
+            .catch(() => {
+              this.$message({
+                type: "info",
+                message: "取消"
+              });
+            });
+        }
+      });
     },
 
     //删除用户
@@ -353,10 +351,8 @@ export default {
       )
         .then(() => {
           DeleteUser(row.id).then(deleres => {
-            console.log(deleres);
             if (deleres.data.code == 0) {
-              this.userList = deleres.data.userData;
-              this.totalCount = deleres.data.total;
+              this.fetchData();
               this.$message.success(
                 "" + row.userName + "用户" + deleres.data.msg + ""
               );
@@ -389,10 +385,8 @@ export default {
       })
         .then(() => {
           deleteUsers(array).then(deleres => {
-            console.log(deleres);
             if (deleres.data.code == 0) {
-              this.userList = deleres.data.data;
-              this.totalCount = deleres.data.total;
+              this.fetchData();
               this.$message.success(
                 "" + array.length + "个用户" + deleres.data.msg + ""
               );
@@ -426,11 +420,11 @@ export default {
     //分页
     handleSizeChange(val) {
       this.PageSize = val;
-      this.handleSizeChange();
+      this.fetchData();
     },
     handleCurrentChange(val) {
       this.CurrentPage = val;
-      this.handleCurrentChange();
+      this.fetchData();
     }
 
     //修改角色弹出框

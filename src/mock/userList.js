@@ -61,8 +61,8 @@ export default {
     if (validatePhoneNumber(phoneNumber) && isvalidateEmail(email)) {
       userData.some(item => {
         if (item.id == id) {
-          item.phoneNumber == phoneNumber,
-            item.email == email,
+          item.phoneNumber = phoneNumber,
+            item.email = email,
             item.setRoles = roleNames.join(",")
           data = {
             code: 0,
@@ -107,8 +107,8 @@ export default {
   },
   //修改密码
   updateUserPass: config => {
-    const { id, oldPass, newPass, sureNewPass } = JSON.parse(config.body)
-    if (oldPass != undefined && newPass != undefined && sureNewPass != undefined) {
+    const { id, newPass, sureNewPass } = JSON.parse(config.body)
+    if (newPass != undefined && sureNewPass != undefined) {
       userData.some(item => {
         if (item.id === JSON.parse(id)) {
           data = {
@@ -139,8 +139,6 @@ export default {
         data = {
           code: 0,
           msg: '删除成功',
-          total: userData.length,
-          userData
         }
         return true
       } else {
@@ -156,14 +154,11 @@ export default {
   //批量删除
   batchDeleteUser: config => {
     const { ids } = JSON.parse(config.body)
-    userData = userData.filter(e => {
-      if (!ids) return false
-      if (ids) return !ids.includes(e.id)
+    userData = userData.filter(item => {
+      if (ids.indexOf(item.id) === -1) return true
     })
     return {
       code: 0,
-      data: userData,
-      total: userData.length,
       msg: "删除成功"
     }
   }

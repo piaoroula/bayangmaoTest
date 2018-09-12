@@ -89,7 +89,7 @@
       </el-col>
       <el-col :span="16">
         <div class="grid-content bg-purple">
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="curPage" :page-sizes="[20,50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
+          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="curPage" :page-sizes="[10,20,30,40,50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalCount">
           </el-pagination>
         </div>
       </el-col>
@@ -165,10 +165,13 @@ export default {
       pageSize: 20,
       multipleSelection: [], //存放目前选中的所有项。
       reportForm: {
-        id: "",
-        title: "",
-        state: "",
-        dateTime: [new Date().setDate(new Date().getDate() - 3), new Date()]
+        id: null,
+        title: null,
+        state: null,
+        dateTime: [
+          new Date().setDate(new Date().getDate() - 3),
+          new Date().setDate(new Date().getDate() + 1)
+        ]
       },
       statelist: [
         {
@@ -289,15 +292,11 @@ export default {
         }
       });
     },
-    //删除数据
+    //单行删除数据
     handleDelete(index, row) {
       deleteReport(row.id).then(res => {
-        console.log(res);
         if (res.data.code == 0) {
-          //数据删除过程为后台处理
-          // this.report.splice(index, 1);
-          this.report = res.data.reportData;
-          this.totalCount = res.data.total;
+          this.getList();
           this.$message.success(res.data.msg);
         } else {
           this.$message.error(res.data.msg);
@@ -312,10 +311,8 @@ export default {
         array.push(rows.id);
       });
       batchDeleteReport(array).then(res => {
-        console.log(res);
         if (res.data.code == 0) {
-          this.report = res.data.data;
-          this.totalCount = res.data.total;
+          this.getList();
           this.$message.success(res.data.msg);
         }
       });
@@ -336,7 +333,6 @@ export default {
         this.addReport.content !== undefined
       ) {
         createReport(addData).then(res => {
-          console.log(res);
           if (res.data.code == 0) {
             this.getList();
             this.$message.success(res.data.msg);

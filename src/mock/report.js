@@ -3,7 +3,7 @@ import { param2Obj } from '@/utils'
 var moment = require("moment");
 let reportData = []
 let data
-const count = 100
+const count = 500
 
 for (let i = 0; i < count; i++) {
   reportData.push(Mock.mock({
@@ -87,17 +87,17 @@ export default {
     return data
   },
 
-  //删除数据
+  //单条删除数据
   deleteReport: config => {
     const { id } = JSON.parse(config.body)
     reportData.some(item => {
       if (item.id === JSON.parse(id)) {
-        reportData = reportData.filter(k => k.id != id)
+        //获取当前数据的索引
+        var index = reportData.indexOf(item)
+        reportData.splice(index, 1)
         data = {
           code: 0,
           msg: '删除成功',
-          total: reportData.length,
-          reportData
         }
         return true
       } else {
@@ -114,15 +114,13 @@ export default {
   //批量删除
   batchremove: config => {
     let { ids } = JSON.parse(config.body)
-    reportData = reportData.filter(e => {
-      if (!ids) return false
-      if (ids) return !ids.includes(e.id)
+    reportData = reportData.filter(item => {
+      if (ids.indexOf(item.id) === -1) return true
     })
+
     return {
       code: 0,
       msg: '删除成功',
-      data: reportData,
-      total: reportData.length
     }
   },
   //新增数据

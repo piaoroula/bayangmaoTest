@@ -1,7 +1,7 @@
 import Mock from 'mockjs'
 import { param2Obj } from '@/utils'
 var moment = require("moment");
-const taskData = []
+let taskData = []
 const count = 100
 var data
 for (let i = 0; i < count; i++) {
@@ -122,9 +122,8 @@ export default {
       idArry.push(item.id)
     })
     var maxId = Math.max.apply(Math, idArry);
-    console.log(maxId)
-    if (title != undefined && describe != undefined && expenses != undefined && isEnable != undefined && endTime != undefined) {
-      var addDta = {
+    if (title != null && describe != null && expenses != null && isEnable != null && endTime != null) {
+      var addData = {
         id: maxId + 1,
         title: title,
         describe: describe,
@@ -133,16 +132,18 @@ export default {
         creationTime: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
         endTime: endTime,
       }
-      taskData.splice(0, 0, addDta)
-      return {
+      taskData.splice(0, 0, addData)
+
+      data = {
         code: 0,
         msg: '添加数据成功'
       }
     } else {
-      return {
+      data = {
         code: 1,
         msg: '添加数据失败'
       }
     }
+    return data
   }
 }

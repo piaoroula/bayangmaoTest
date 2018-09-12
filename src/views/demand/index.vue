@@ -165,10 +165,10 @@ export default {
       pageSize: 20,
       multipleSelection: [], //存放目前选中的所有项。
       demandForm: {
-        id: "",
-        activityId: "",
-        userId: "",
-        state: "",
+        id: null,
+        activityId: null,
+        userId: null,
+        state: null,
         dateTime: [new Date().setDate(new Date().getDate() - 3), new Date()]
       },
       statelist: [
