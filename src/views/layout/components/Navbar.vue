@@ -11,7 +11,7 @@
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
           <!-- <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'"> -->
-          <span>admin</span>
+          <span>{{UserName}}</span>
           <i class="el-icon-caret-bottom"></i>
         </div>
         <el-dropdown-menu slot="dropdown">
@@ -35,7 +35,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
 import ErrorLog from "@/components/ErrorLog";
 import LangSelect from "@/components/LangSelect";
-
+import { getUserName } from "@/utils/auth";
 export default {
   components: {
     Breadcrumb,
@@ -43,8 +43,16 @@ export default {
     ErrorLog,
     LangSelect
   },
+  data() {
+    return {
+      UserName: null
+    };
+  },
   computed: {
     ...mapGetters(["sidebar", "name", "avatar"])
+  },
+  created() {
+    this.UserName = getUserName();
   },
   methods: {
     toggleSideBar() {
