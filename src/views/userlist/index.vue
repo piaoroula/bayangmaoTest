@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
-    <div style="margin-bottom:20px;">
+    <el-row style="margin-bottom:20px">
       <el-button type="danger" plain @click="deleteSelection()">删除</el-button>
       <el-button type="primary" plain @click="toggleSelection()">取消选择</el-button>
-    </div>
+    </el-row>
     <el-table :data="userList" :empty-text='emptytext' v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row ref="multipleTable" @selection-change="handleSelectionChange">
       >
       <el-table-column type="selection" width="70" align="center">

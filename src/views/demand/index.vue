@@ -1,58 +1,30 @@
 <template>
   <div class="app-container">
-    <div style="margin-bottom:20px;background:#f3f3f3;height:84px;padding:0px 20px;">
-      <el-form ref="demandForm" :model="demandForm" :inline="true" style="margin-bottom:20px;width:90%;float:left">
-        <el-row :gutter="20">
-          <el-col style="width:200px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="编号：">
-                <el-input v-model="demandForm.id" style="width:100px"></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:200px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="活动ID：">
-                <el-input v-model="demandForm.activityId" style="width:100px"></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:200px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="用户ID：">
-                <el-input v-model="demandForm.userId" style="width:100px"></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:500px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="时间">
-                <el-date-picker v-model="demandForm.dateTime" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
-                </el-date-picker>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:200px">
-            <div class="grid-content bg-purple" style="width:200px">
-              <el-form-item label="状态">
-                <el-radio-group v-model="demandForm.state">
-                  <el-radio v-for="states in statelist" :key="states.id" :label="states.id">
-                    {{states.value}}
-                  </el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:70px;margin-left:30px">
-            <div class="grid-content bg-purple">
-              <el-form-item>
-                <el-button type="primary" icon="el-icon-search" @click="onSearch()">搜索</el-button>
-              </el-form-item>
-            </div>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
+    <el-form ref="demandForm" :model="demandForm" :inline="true">
+      <el-form-item label="编号：">
+        <el-input v-model="demandForm.id"></el-input>
+      </el-form-item>
+      <el-form-item label="活动ID：">
+        <el-input v-model="demandForm.activityId"></el-input>
+      </el-form-item>
+      <el-form-item label="用户ID：">
+        <el-input v-model="demandForm.userId"></el-input>
+      </el-form-item>
+      <el-form-item label="时间">
+        <el-date-picker v-model="demandForm.dateTime" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="状态">
+        <el-radio-group v-model="demandForm.state">
+          <el-radio v-for="states in statelist" :key="states.id" :label="states.id">
+            {{states.value}}
+          </el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="onSearch()">搜索</el-button>
+      </el-form-item>
+    </el-form>
     <!-- 需求列表 -->
     <el-table :data="demandData" :empty-text='emptytext' v-loading.body="listLoading" element-loading-text="Loading" border="" fit="" highlight-current-row="" ref="multipleTable">
       <el-table-column label="编号" width="80" align="center">

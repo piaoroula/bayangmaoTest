@@ -1,52 +1,28 @@
 <template>
   <div class="app-container">
-    <div style="margin-bottom:20px;background:#f3f3f3;height:84px;padding:0px 20px;">
-      <el-form ref="reportForm" :model="reportForm" :inline="true" style="margin-bottom:20px;width:90%;float:left">
-        <el-row :gutter="20">
-          <el-col style="width:200px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="编号：">
-                <el-input v-model="reportForm.id" style="width:100px"></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:500px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="标题：">
-                <el-input v-model="reportForm.title" style="width:300px"></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:500px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="时间">
-                <el-date-picker v-model="reportForm.dateTime" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
-                </el-date-picker>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:200px">
-            <div class="grid-content bg-purple" style="width:200px">
-              <el-form-item label="状态">
-                <el-radio-group v-model="reportForm.state">
-                  <el-radio v-for="states in statelist" :key="states.id" :label="states.id">
-                    {{states.value}}
-                  </el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:70px;margin-left:30px">
-            <div class="grid-content bg-purple">
-              <el-form-item>
-                <el-button type="primary" icon="el-icon-search" @click="onSearch(reportForm)">搜索</el-button>
-              </el-form-item>
-            </div>
-          </el-col>
-        </el-row>
-      </el-form>
-      <el-button type="danger" @click="addReports()" style="float:right;margin-top:20px">+新增线报</el-button>
-    </div>
+    <el-form :inline="true" ref="reportForm" :model="reportForm" class="demo-form-inline">
+      <el-form-item label="编号：">
+        <el-input v-model="reportForm.id"></el-input>
+      </el-form-item>
+      <el-form-item label="标题：">
+        <el-input v-model="reportForm.title"></el-input>
+      </el-form-item>
+      <el-form-item label="时间">
+        <el-date-picker v-model="reportForm.dateTime" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="状态">
+        <el-radio-group v-model="reportForm.state">
+          <el-radio v-for="states in statelist" :key="states.id" :label="states.id">
+            {{states.value}}
+          </el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="onSearch(reportForm)">搜索</el-button>
+        <el-button type="danger" @click="addReports()">+新增线报</el-button>
+      </el-form-item>
+    </el-form>
     <!-- 线报列表 -->
     <el-table :data="report" :empty-text='emptytext' v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row ref="multipleTable" @selection-change="handleSelectionChange">
       >
@@ -64,7 +40,8 @@
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="状态" width="200">
         <template slot-scope="scope">
-          {{convert(scope.row.state)}}
+          <!-- 三元表达式 -->
+          {{(scope.row.state) ? '已审':'未审'}}
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="发布时间" width="300">
@@ -366,14 +343,6 @@ export default {
     handleCurrentChange(val) {
       this.curPage = val;
       this.getList();
-    },
-    //状态转换
-    convert(state) {
-      if (state) {
-        return "已审";
-      } else {
-        return "未审";
-      }
     }
   }
 };

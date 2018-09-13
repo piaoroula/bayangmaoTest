@@ -1,52 +1,29 @@
 <template>
   <div class="app-container">
-    <div style="margin-bottom:20px;background:#f3f3f3;height:84px;padding:0px 20px;">
-      <el-form ref="taskForm" :model="taskForm" :inline="true" style="margin-bottom:20px;width:90%;float:left">
-        <el-row :gutter="20">
-          <el-col style="width:200px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="编号：">
-                <el-input v-model="taskForm.id" style="width:100px"></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:500px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="标题：">
-                <el-input v-model="taskForm.title" style="width:300px"></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:500px">
-            <div class="grid-content bg-purple">
-              <el-form-item label="时间">
-                <el-date-picker v-model="taskForm.dateTime" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
-                </el-date-picker>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:200px">
-            <div class="grid-content bg-purple" style="width:200px">
-              <el-form-item label="状态">
-                <el-radio-group v-model="taskForm.isEnable">
-                  <el-radio v-for="states in statelist" :key="states.id" :label="states.id">
-                    {{states.value}}
-                  </el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col style="width:70px;margin-left:30px">
-            <div class="grid-content bg-purple">
-              <el-form-item>
-                <el-button type="primary" icon="el-icon-search" @click="onSearch()">搜索</el-button>
-              </el-form-item>
-            </div>
-          </el-col>
-        </el-row>
-      </el-form>
-      <el-button type="danger" @click="addTask()" style="float:right;margin-top:20px">+新增活动</el-button>
-    </div>
+    <el-form ref="taskForm" :model="taskForm" :inline="true">
+      <el-form-item label="编号：">
+        <el-input v-model="taskForm.id" style="width:100px"></el-input>
+      </el-form-item>
+      <el-form-item label="标题：">
+        <el-input v-model="taskForm.title" style="width:300px"></el-input>
+      </el-form-item>
+      <el-form-item label="时间">
+        <el-date-picker v-model="taskForm.dateTime" type="datetimerange" :picker-options="pickerOptions" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" align="right">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="状态">
+        <el-radio-group v-model="taskForm.isEnable">
+          <el-radio v-for="states in statelist" :key="states.id" :label="states.id">
+            {{states.value}}
+          </el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" @click="onSearch()">搜索</el-button>
+        <el-button type="danger" @click="addTask()">+新增活动</el-button>
+      </el-form-item>
+    </el-form>
+
     <!-- 活动列表 -->
     <el-table :data="taskData" :empty-text='emptytext' v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row ref="multipleTable">
       <el-table-column label="编号" width="80" align="center">
@@ -75,7 +52,7 @@
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="审核状态" width="100">
         <template slot-scope="scope">
-          <span>{{convert(scope.row.isEnable)}}</span>
+          {{(scope.row.isEnable)?'已审':'未审'}}
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="操作" width="220" align="center">
